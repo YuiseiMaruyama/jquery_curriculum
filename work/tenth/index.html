@@ -59,15 +59,105 @@
       //  <div class='lists__item__inner'>
       //    <a href='' class='lists__item__link' target='_blank'>
       //      <img src='' class='lists__item__img' alt=''>
-      //      <p class='lists__item__detail'>作品名：</p>
-      //      <p class='lists__item__detail'>作者　：</p>
-      //      <p class='lists__item__detail'>出版社：</p>
+      //      <p class='lists__item__detail'>作品名：data.Items[i].Item.title</p>
+      //      <p class='lists__item__detail'>作者　：data.Items[i].Item.author</p>
+      //      <p class='lists__item__detail'>出版社：data.Items[i].Item.publisherName</p>
       //    </a>
       //  </div>
       // </li>
       //
-      //
-      //
+      $(function(){
+        var pageNum = 0;
+        var searchword = "";
+        var prev_searchword = "";
+        var template = "";
+
+        $('.search__btn').on('click', function() {
+          Search()
+        });
+
+        function Search(){
+          searchword = $('.search__text__input').val();
+          pageNum++;
+          console.log(searchword);
+          console.log(prev_searchword);
+
+          if(prev_searchword !== searchword) { 
+            pageNum = 1;
+            $('.lists').empty(); 
+            prev_searchword = searchword; 
+          }
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',  //"POST"または"GET"を作るためのリクエストのタイプ  
+            datatype: 'json', //サーバからの受信データタイプ
+            data: { //送信するデータ
+              // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+              applicationId: '1019399324990976605', // (今回はこのIDを使用してください)
+              booksGenreId: '001', //楽天ブックスにおけるジャンルを特定するためのID
+              keyword: searchword, //検索キーワード
+              hits: '20', //1ページあたりの取得件数
+              page: pageNum //取得ページ
+            },
+          }).done(function(data,status) {  //正常に通信ができたとき
+            console.log(status);
+              Success(data);
+          })
+            .fail(function(xhr, status){ //正常に通信ができていないとき
+            console.log(status);
+             Fail_message(xhr);
+            });
+        }
+
+        function Success(data){
+          template = "";  //templateを初期化
+          console.log(data);
+          if(data.hits===0){
+            $('.search').after('<p class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
+          }
+          if(data.count > 0){
+            $.each(data.Items,function(i,listitem){
+              console.log(listitem);
+                  template  += "<li class='lists__item'><div class='lists__item__inner'><a href='"
+                                +data.Items[i].Item.itemUrl+"' class='lists__item__link' target='_blank'><img src='"
+                                +data.Items[i].Item.largeImageUrl+"' class='lists__item__img' alt='"
+                                +data.Items[i].Item.title+"'><p class='lists__item__detail'>作品名："
+                                +data.Items[i].Item.title+"</p><p class='lists__item__detail'>作者　："
+                                +data.Items[i].Item.author+"</p><p class='lists__item__detail'>出版社："
+                                +data.Items[i].Item.publisherName+"</p></a></div></li>";
+            })
+            $('.lists').prepend(template);
+          }
+        }
+        
+        
+        function Fail_message(err){ //渡された引数xhrを格納する変数errを用意
+
+          $('.lists').empty();
+          // console.log(searchword);
+          if (err.status === 400 && searchword === "") {
+            // ステータスコードが 400 の場合
+            $('.lists').html('<p class="message">検索ワードを入力してください。</p>');
+          } else if (err.status === 400 && searchword.match(/[!-~]{1}/)) {//半角英数字1文字
+            // ステータスコードが 400 の場合
+            $('.lists').html('<p class="message">検索欄には半角英数字2文字以上を入力してください。</p>');
+          } else if (err.status === 404){
+            // ステータスコードが 404 の場合
+            $('.lists').html('<p class="message">ページが見つかりませんでした。<p>');
+          } else if (err.status === 429){
+            // ステータスコードが 429 の場合
+            $('.lists').html('<p class="message">アクセスが集中しています<br>しばらく時間を空けてから、ご利用ください。</p>');
+          } else if (err.status === 500){
+            // ステータスコードが 500 の場合
+            $('.lists').html('<p class="message">システムエラーです。長時間続くようであれば、こちらよりお問い合わせください。<br><a>https://webservice.faq.rakuten.co.jp/app/ask1/</a></p>');
+          } else if (err.status === 503){
+            // ステータスコードが 503 の場合
+            $('.lists').html('<p class="message">メンテナンス中です。<br>しばらく時間を空けてから、ご利用ください。</p>');
+          } else{ //  ステータスコードが 上記以外でエラーメッセージに英語の記述がある場合
+              $('.lists').html('<p class="message">エラーが発生しています。</p>');
+          }
+        }        
+      });
     </script>
   </body>
 </html>

@@ -56,6 +56,21 @@
       // .next() 要素の隣の要素を取得します。これは使わなくてもできます。
       // .children() 要素の子要素を取得します。
       // .stop() 現在動作中のアニメーション処理を全て中止します。
+
+
+      // find()では子要素の子要素も含む全ての子孫要素から条件を指定して取得できる
+      // children()では要素内の全ての子要素を取得できるが、孫要素は取得できない
+
+    $(function(){
+      $('.menu__list  > li').hover(function(){
+        //slideDown('speed',callback)
+        $(this).children('ul').stop().slideDown("fast");
+        //$(this) はホバーされたmenulistクラスのli要素
+      }, function(){
+        $(this).children('ul').stop().slideUp("fast");
+      });
+    });
+
     </script>
   </body>
 </html>

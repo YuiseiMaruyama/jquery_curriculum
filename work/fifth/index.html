@@ -88,7 +88,7 @@
       // selectボックスをクリックして言語を選び、その言語と関係のあるリストだけが表示されるプログラムです。
       // [処理の流れ]
       // ・セレクトボックスをクリックする。
-      // ・セレクトボックスのvalueとliのdata-category-typeが一致しているものをだけ表示させる。
+      // ・セレクトボックスのvalueとliのdata-category-typeが一致しているものだけ表示させる。
       // ・Allを選択した場合のみ全てのliを表示させる。
       // [使うメソッド]
       // .show() 要素を表示させる
@@ -97,6 +97,25 @@
       // .data('') DOM要素にあるdata-~を取得できる
       // .change() セレクトボックスの値の変更をキャッチする関数
       // $().each() DOM要素を1つずつループ処理をする（ループ内で$(this)を使うと要素がひとつずつ取得できる）
+        
+      $(function() {
+        $(".select").change(function(){ // change()は要素の中身が変更された際にイベント処理を実行する
+          //$(this) はselectクラスがついた要素
+          var val = $(this).val(); 
+          if(val === "all"){
+            $('.list li').show();
+            } else {
+              $('.list li').each(function(){
+                if($(this).data("category-type") === val){
+                  // $(this) はcategory-typeの一つ
+                  $(this).show(); // 表示
+                } else {
+                  $(this).hide(); // 非表示
+                }
+              });
+              }
+            });
+          });
     </script>
   </body>
 </html>

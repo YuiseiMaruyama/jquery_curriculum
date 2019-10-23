@@ -22,11 +22,29 @@
     <script src="../../common/js/jquery.js"></script>
     <script>
       // 今回やるのは文字数チェッカーです。
-      // .input に文字を入力し、文字を入力した段階でその文字数に応じて .rest-count の値が減っていき、最大文字数である30文字以上入力すると .rest-count に .red クラスが追加されて文字色が赤くなり、30文字以内になると、.red クラスが外れ、文字色が元に戻る。（ちなみに改行は文字数に含まない。）
+      // .input に文字を入力し、文字を入力した段階でその文字数に応じて .rest-count の値が減っていき、最大文字数である30文字以上入力すると 
+      // .rest-count に .red クラスが追加されて文字色が赤くなり、30文字以内になると、.red クラスが外れ、文字色が元に戻る。（ちなみに改行は文字数に含まない。）
       // .keyup() 文字入力後に発火されるイベントです。
       // .replace(/\s+/g,'').length 改行を含まない文字数を取得します。
       // .val() input要素のvalueを取得します。
+
+    $(function(){
+          // .keyup() 文字入力後に発火されるイベント
+      $(".input").keyup(function() {
+        // var max = $(".rest-count").html();
+        var max = 30;
+        // .replace(/\s+/g,'').length　で改行を含まない文字数を取得
+        var thisValueLength = $(this).val().replace(/\s+/g,'').length;
+
+        if (thisValueLength > max) {
+          $(".rest-count").addClass('red');
+        } else {
+          $(".rest-count").removeClass('red');
+        }
+        $(".rest-count").text(max - thisValueLength); 
+      });
+    });
+
     </script>
   </body>
 </html>
-

@@ -42,6 +42,54 @@
       // .offset().top 要素の位置を取得します。
       // .fadeIn() 要素をフェードインさせる。
       // .fadeOut() 要素をフェードアウトさせる。
+
+      $(function(){
+        //// windowがスクロールされた時に実行する処理
+        $(window).scroll(function() {
+        if ($(this).scrollTop() >= 100) {
+          $('.scrollTopBtn').fadeIn();
+        } else {
+          $('.scrollTopBtn').fadeOut();
+            }
+       });
+       $('.scrollTopBtn').click(function() {
+          // webkitが使えるか使えないかわからないのでbodyとhtmlを両方指定する
+          $('body, html').animate({ scrollTop: 0 }, 500);
+      });
+      $('.menu__btn').click( function() {
+          $('.menu').find('.menu__btn').click(function(){
+            //data-scroll-place-typeで一致しているかで判定
+
+          //   var sign = $('.contents').find('.title').eq(data('scroll-place-type')).offset().top;
+          // $('html,body').animate({ scrollTop:sign}, 500);
+
+            if ($(this).data('scroll-place-type') === 'home') {
+              var home = $('.contents').find('.title').data('home').offset().top;
+              $('html,body').animate({ scrollTop:home}, 500);
+
+            }else if ($(this).data('scroll-place-type') === 'news') {
+
+              var news = $('.contents').find('.title').data('news').offset().top;
+              $('html,body').animate({ scrollTop:news}, 500);
+
+            }else{
+
+              var about = $('.contents').find('.title').data('about').offset().top;
+              $('html,body').animate({ scrollTop:about}, 500);
+
+            }
+
+
+          //   var num = $(this).index();
+          //   // .offset().top 要素の位置を取得
+          //   var sign = $('.contents').find('.title').eq(num).offset().top;
+          // $('html,body').animate({ scrollTop:sign}, 500);
+
+
+        });
+        
+      }); 
+  });
     </script>
   </body>
 </html>
